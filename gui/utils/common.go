@@ -5,7 +5,6 @@ import (
 	"strconv"
 )
 
-
 func TransformColorFromHex(hexColor string) color.NRGBA {
 	hexColor = hexColor[1:]
 
@@ -24,4 +23,14 @@ func TransformColorFromHex(hexColor string) color.NRGBA {
 	}
 
 	return nrgbaColor
+}
+
+func GetDigits(number int, timeCounterSize int) []uint {
+	digits := make([]uint, timeCounterSize)
+	for i := 0; i < timeCounterSize; i++ {
+		digits[timeCounterSize-i-1] = uint(number % 10)
+		number /= 10
+	}
+
+	return digits
 }

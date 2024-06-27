@@ -24,10 +24,12 @@ var once sync.Once
 
 func GetAppStorage() *AppStorage {
 	once.Do(func() {
+		if state == nil {
+			state = &AppStorage{}
 
-		state = &AppStorage{}
-
-		state.setDefaultApplication(("Tracking"))
+			state.setDefaultApplication(("Tracking"))
+		}
+		
 	})
 
 	return state
@@ -45,7 +47,9 @@ func (s *AppStorage) setDefaultApplication(window string) {
 		CurrentTab: make(chan utils.Tab, 1),
 	}
 	
-	s.application.CurrentTab <- utils.LoginTab
+	s.application.CurrentTab <- utils.HomeTab
+
+	// s.application.CurrentTab <- utils.LoginTab
 
 }
 

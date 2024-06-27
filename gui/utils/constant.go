@@ -17,4 +17,9 @@ var (
 		Title: "Login",
 		Active: LOGIN,
 	}
+	HomeTab = Tab {
+		Title: "Home",
+		Active: HOME,
+	}
+
 )
