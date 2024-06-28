@@ -3,6 +3,7 @@ package utils
 import (
 	"image/color"
 	"strconv"
+	"time"
 )
 
 func TransformColorFromHex(hexColor string) color.NRGBA {
@@ -33,4 +34,32 @@ func GetDigits(number int, timeCounterSize int) []uint {
 	}
 
 	return digits
+}
+
+
+
+func ConvertSecToHourMinSec(seconds int) (hour, minute, second string) {
+	duration := time.Duration(seconds) * time.Second
+	hour = formatNumber2String(int(duration.Hours()), HOUR)
+	minute = formatNumber2String(int(duration.Minutes()) % 60, MINUTE)
+	second = formatNumber2String(int(duration.Seconds()) % 60, SECOND)
+	return
+}
+
+func formatNumber2String(num int, timeType int) string {
+	strNum := strconv.Itoa(num)
+
+	if num < 10 {
+		strNum = "0" + strNum
+	}
+
+	// if timeType == HOUR {
+	// 	strNum = strNum + ":"
+	// }
+
+	// if timeType == MINUTE {
+	// 	strNum = strNum + ":"
+	// }
+
+	return strNum
 }

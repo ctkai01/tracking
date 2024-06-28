@@ -5,6 +5,10 @@ type ActiveTab string
 const (
 	LOGIN ActiveTab = "LOGIN"
 	HOME  ActiveTab = "HOME"
+
+	HOUR = 1
+	MINUTE = 2
+	SECOND = 3
 )
 
 type Tab struct {

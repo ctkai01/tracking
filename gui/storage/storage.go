@@ -12,6 +12,7 @@ type Application struct {
 	AppCore    fyne.App
 	MainWindow fyne.Window
 	CurrentTab chan utils.Tab
+	Counter int
 }
 
 type AppStorage struct {

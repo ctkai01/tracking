@@ -5,6 +5,7 @@ import (
 	"tracking-go/gui/utils"
 
 	// "fyne.io/fyne/canvas"
+	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	wg "fyne.io/x/fyne/widget"
@@ -15,6 +16,36 @@ type timeCounter struct {
 	digits []*wg.HexWidget
 	current int
 
+}
+
+type timeSection struct {
+	*fyne.Container
+	Value *string
+	TimeDigit *canvas.Text
+}
+
+func NewTimeSection(value *string) *timeSection {
+	result := &timeSection{ Value: value}
+
+	timeDigit := canvas.NewText(*result.Value, utils.TransformColorFromHex("#800080"))
+	timeDigit.TextStyle.Bold = true
+	timeDigit.TextSize = 20
+
+
+	result.TimeDigit = timeDigit
+
+	result.Container = container.NewVBox(timeDigit)
+
+	return result
+}
+
+func (t *timeSection) Refresh() {
+	t.TimeDigit.Text = *t.Value
+	t.TimeDigit.Refresh()
+}
+
+func (t *timeSection) UI() *fyne.Container {
+	return t.Container
 }
 
 func NewTimeCounter(init int) *timeCounter {

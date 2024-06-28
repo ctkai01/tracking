@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 	"tracking-go/gui/screens"
 	"tracking-go/gui/storage"
 	// "fyne.io/fyne/v2/widget"
@@ -24,6 +25,14 @@ func main() {
 			mainWindow.SetTitle(tab.Title)
 			mainWindow.SetContent(screens.LoadPage(tab.Active))
 		}
+	}()
+
+	go func ()  {
+		for {
+			time.Sleep(time.Second)
+			application.Counter++ 
+		}
+		
 	}()
 	application.MainWindow = mainWindow
 	mainWindow.ShowAndRun()
