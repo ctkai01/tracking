@@ -40,13 +40,13 @@ func GetDigits(number int, timeCounterSize int) []uint {
 
 func ConvertSecToHourMinSec(seconds int) (hour, minute, second string) {
 	duration := time.Duration(seconds) * time.Second
-	hour = formatNumber2String(int(duration.Hours()), HOUR)
-	minute = formatNumber2String(int(duration.Minutes()) % 60, MINUTE)
-	second = formatNumber2String(int(duration.Seconds()) % 60, SECOND)
+	hour = formatNumber2String(int(duration.Hours()))
+	minute = formatNumber2String(int(duration.Minutes()) % 60)
+	second = formatNumber2String(int(duration.Seconds()) % 60)
 	return
 }
 
-func formatNumber2String(num int, timeType int) string {
+func formatNumber2String(num int) string {
 	strNum := strconv.Itoa(num)
 
 	if num < 10 {

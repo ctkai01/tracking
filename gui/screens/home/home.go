@@ -10,14 +10,16 @@ import (
 	// "time"
 	"tracking-go/gui/assets"
 	"tracking-go/gui/layout"
-	"tracking-go/gui/screens/home/timmer"
 	"tracking-go/gui/storage"
 	"tracking-go/gui/utils"
+	mywidget "tracking-go/gui/widget"
+	"tracking-go/gui/widget/timmer"
 	"tracking-go/models"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/data/binding"
 	fyneLayout "fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 	// "fyne.io/fyne/v2/widget"
@@ -27,11 +29,22 @@ var (
 	app                                  = storage.GetAppStorage().GetApplication()
 	hoursSection, minSection, secSection utils.Time
 	hours, min, sec                      string
+	ticker                               = time.NewTicker(1 * time.Second)
 )
 
 func HomePage() *fyne.Container {
 	go resfreshTimeWorking()
-
+	go func() {
+		for e := range app.TaskEvent {
+			switch e.Type {
+			case utils.TASK_STATUS_CHANGE:
+				fmt.Printf("Task %d status changed\n", e.Task.Id)
+				app.ActiveTask = e.Task
+				// Handle task status change event
+				// Example: Update UI or perform other actions based on the event
+			}
+		}
+	}()
 	workingTimeTitle := canvas.NewText("Working Time", color.Black)
 	workingTimeTitle.TextStyle.Bold = true
 
@@ -49,49 +62,53 @@ func HomePage() *fyne.Container {
 	return content
 }
 
-var tasks = models.Tasks
+func renderListLine() fyne.CanvasObject {
+	t := mywidget.NewMyToolActionWidget("")
+	// fmt.Println("T: ", t)
+	// return container.New(fyneLayout.NewBorderLayout(nil, nil, nil, t), t, widget.NewLabel(""))
+
+	return container.New(fyneLayout.NewGridLayout(4), widget.NewLabel(""), fyneLayout.NewSpacer(), fyneLayout.NewSpacer(), t)
+}
+
+func bindDataToListLine() func(di binding.DataItem, co fyne.CanvasObject) {
+	return func(di binding.DataItem, co fyne.CanvasObject) {
+		t := models.NewTaskFromDataItem(di)
+		container := co.(*fyne.Container)
+
+		label := container.Objects[0].(*widget.Label)
+		toolAction := container.Objects[3].(*mywidget.MyToolActionWidget)
+
+		toolAction.SetTask(t)
+		nameTask := t.NameTask()
+		label.Truncation = fyne.TextTruncateOff
+		label.Wrapping = fyne.TextWrapOff
+		label.Bind(binding.BindString(&nameTask))
+
+		_, _, workingTime := utils.ConvertSecToHourMinSec(t.WorkingTime)
+		toolAction.WorkingTime.Text = workingTime
+
+	}
+}
 
 func taskListContainer() *widget.List {
-	list := widget.NewList(
-		func() int {
-			fmt.Println(len(tasks))
-			return len(tasks)
-		},
-		func() fyne.CanvasObject {
-			// return widget.NewLabel("template")
-			// return TaskContainer
-			return container.New(fyneLayout.NewVBoxLayout())
-		},
-		func(i widget.ListItemID, o fyne.CanvasObject) {
-			// o.(*widget.Label).SetText(fmt.Sprintf("%s: %s", tasks[i].ProjectName, tasks[i].TaskName))
-			// o.(*widget.Label).Refresh()
-			
-			taskObj := TaskContainer(&tasks[i])
-        // if o.(*fyne.Container) == nil {
-        //     o = container.New(fyneLayout.NewVBoxLayout(), taskObj)
-        // } else {
-        //     o.(*fyne.Container).Add(taskObj)
-        // }
-        // o.(*fyne.Container).Refresh()
-		o.(*fyne.Container).Objects = []fyne.CanvasObject{taskObj}
+	tasks := models.NewTaskData(models.Tasks)
 
-            // o.(*fyne.Container).Refresh()
+	list := widget.NewListWithData(tasks, renderListLine, bindDataToListLine())
 
-			//  taskContainer := TaskContainer(&data[i])
-            // o.(*fyne.Container).Objects = append(o.(*fyne.Container).Objects, taskContainer)
-            // o.(*fyne.Container).Refresh()
-		})
 	return list
 }
 
 func resfreshTimeWorking() {
 	for {
 
-		hours, min, sec = utils.ConvertSecToHourMinSec(app.Counter)
-		hoursSection.Refresh()
-		minSection.Refresh()
-		secSection.Refresh()
-		time.Sleep(time.Second)
+		if hoursSection != nil && minSection != nil && secSection != nil {
+			hours, min, sec = utils.ConvertSecToHourMinSec(app.Counter)
+			hoursSection.Refresh()
+			minSection.Refresh()
+			secSection.Refresh()
+			time.Sleep(time.Second)
+		}
+
 	}
 }
 
@@ -114,20 +131,6 @@ func countingTimerSection() *fyne.Container {
 	return container.NewHBox(hoursSection.UI(), divideHour, minSection.UI(), divideMinute, secSection.UI())
 }
 
-func TimeShowSection() fyne.CanvasObject {
-	numberInit := 0
-	sectionTime := timmer.NewTimeCounter(numberInit).Container
-
-	// for {
-
-	// 	numberInit++
-	// 	time.Sleep(time.Second)
-	// }
-
-	return sectionTime
-
-}
-
 func infoUserContainer() *fyne.Container {
 	name := canvas.NewText("harvet richard", color.Black)
 
@@ -138,21 +141,8 @@ func infoUserContainer() *fyne.Container {
 
 func utilSection() *fyne.Container {
 	reportIcon := assets.ResourceReportPng
-	// reportImage := canvas.NewImageFromResource(reportIcon)
-	// reportImage.FillMode = canvas.ImageFillContain
-
-	// reportImage.SetMinSize(fyne.NewSize(float32(40), float32(40)))
-	// text2 := canvas.NewText("2", color.Black)
-	// reportText := canvas.NewText("Report", color.Black)
-
-	// urlReport, _ := url.Parse("https://hustdemt.click")
-	// reportLink := widget.NewHyperlinkWithStyle("Report", urlReport, fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
-
-	// reportSection := container.NewHBox(reportImage, reportLink)
 
 	signoutIcon := assets.ResourceSignoutPng
-	// signoutImage := canvas.NewImageFromResource(signoutIcon)
-	// signoutImage.FillMode = canvas.ImageFillContain
 	reportBtn := widget.NewButtonWithIcon("Report", reportIcon, func() {
 		fmt.Println("Report")
 	})

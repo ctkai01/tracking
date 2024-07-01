@@ -48,36 +48,36 @@ func LoginPage() *fyne.Container {
 	// return container.New(layout.NewLoginLayout(fyneLayout.NewSpacer(), content), objs...)
 }
 
-func centerContainer() fyne.CanvasObject {
-	userName := widget.NewEntry()
-	userName.SetPlaceHolder("UserName")
-	password := widget.NewEntry()
-	password.SetPlaceHolder("Password")
-	password.Password = true
+// func centerContainer() fyne.CanvasObject {
+// 	userName := widget.NewEntry()
+// 	userName.SetPlaceHolder("UserName")
+// 	password := widget.NewEntry()
+// 	password.SetPlaceHolder("Password")
+// 	password.Password = true
 
-	forgotPasswordText := canvas.NewText("Forgot password?", utils.TransformColorFromHex("#136acb"))
-	forgotPasswordText.TextStyle.Bold = true
-	forgotPasswordText.Alignment = fyne.TextAlignTrailing
+// 	forgotPasswordText := canvas.NewText("Forgot password?", utils.TransformColorFromHex("#136acb"))
+// 	forgotPasswordText.TextStyle.Bold = true
+// 	forgotPasswordText.Alignment = fyne.TextAlignTrailing
 
-	loginBtn := widget.NewButton("Login", func() {
-		fmt.Println("basic auth : userName : ", userName.Text, " | password : ", password.Text)
-	})
-	loginBtn.Alignment = widget.ButtonAlignCenter
-	loginBtn.Importance = widget.HighImportance
+// 	loginBtn := widget.NewButton("Login", func() {
+// 		fmt.Println("basic auth : userName : ", userName.Text, " | password : ", password.Text)
+// 	})
+// 	loginBtn.Alignment = widget.ButtonAlignCenter
+// 	loginBtn.Importance = widget.HighImportance
 
-	layoutContent := container.NewVBox(
-		userName,
-		// container.New(layout.NewPaddingLayout(0, 10, 0, 0), userName),
+// 	layoutContent := container.NewVBox(
+// 		userName,
+// 		// container.New(layout.NewPaddingLayout(0, 10, 0, 0), userName),
 
-		// container.New(layout.NewPaddingLayout(0, 20, 0, 0), password),
+// 		// container.New(layout.NewPaddingLayout(0, 20, 0, 0), password),
 		
-		// container.New(layout.NewPaddingLayout(0, 10, 0, 0), forgotPasswordText),
+// 		// container.New(layout.NewPaddingLayout(0, 10, 0, 0), forgotPasswordText),
 		
-		// loginBtn,
+// 		// loginBtn,
 
-	)
-	return layoutContent
-}
+// 	)
+// 	return layoutContent
+// }
 
 func imageContainer() fyne.CanvasObject {
 	// https://static-e.live.fc2.com/img/logo/main_logo_new.png?20220722

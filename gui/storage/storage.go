@@ -3,6 +3,7 @@ package storage
 import (
 	"sync"
 	"tracking-go/gui/utils"
+	"tracking-go/models"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -13,6 +14,8 @@ type Application struct {
 	MainWindow fyne.Window
 	CurrentTab chan utils.Tab
 	Counter int
+	TaskEvent chan utils.TaskEvent
+	ActiveTask *models.Task
 }
 
 type AppStorage struct {
@@ -46,6 +49,7 @@ func (s *AppStorage) setDefaultApplication(window string) {
 		AppCore:    a,
 		MainWindow: mainWindow,
 		CurrentTab: make(chan utils.Tab, 1),
+		TaskEvent: make(chan utils.TaskEvent, 1),
 	}
 	
 	s.application.CurrentTab <- utils.HomeTab
