@@ -2,9 +2,13 @@ package main
 
 import (
 	"fmt"
-	"time"
+	// "time"
+	"tracking-go/gui/assets"
 	"tracking-go/gui/screens"
 	"tracking-go/gui/storage"
+
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/driver/desktop"
 	// "fyne.io/fyne/v2/widget"
 	// "fyne.io/fyne/v2/app"
 	// "fyne.io/fyne/v2/container"
@@ -16,8 +20,23 @@ func main() {
 
 	application := appStorage.GetApplication()
 	mainWindow := application.MainWindow
+	fc2Icon := assets.ResourceFc2Png
 
-	mainWindow.SetTitle("Tracking")
+	mainWindow.SetIcon(fc2Icon)
+	mainWindow.SetTitle("Tracking FC2")
+	if desk, ok := application.AppCore.(desktop.App); ok {
+		m := fyne.NewMenu("App", fyne.NewMenuItem("Show", func() {
+			fmt.Println("Tapped Show System tray")
+			mainWindow.Show()
+		}))
+		desk.SetSystemTrayMenu(m)
+		desk.SetSystemTrayIcon(fc2Icon)
+	}
+
+	mainWindow.SetCloseIntercept(func() {
+		mainWindow.Hide()
+	})
+
 
 	go func() {
 		for tab := range application.CurrentTab {
@@ -27,13 +46,6 @@ func main() {
 		}
 	}()
 
-	go func ()  {
-		for {
-			time.Sleep(time.Second)
-			application.Counter++ 
-		}
-		
-	}()
 	application.MainWindow = mainWindow
 	mainWindow.ShowAndRun()
 }

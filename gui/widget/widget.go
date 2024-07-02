@@ -8,30 +8,47 @@ import (
 	"tracking-go/models"
 
 	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/canvas"
+	// "fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 )
 
 type MyToolActionWidget struct {
 	widget.BaseWidget
 	ActionButton *widget.Button
-	WorkingTime  *canvas.Text
+	Hours  *widget.Label
+	Minutes  *widget.Label
+	Seconds  *widget.Label
 	task       *models.Task
 }
 
-func NewMyToolActionWidget(workingTime string) *MyToolActionWidget {
+func NewMyToolActionWidget(hours, minutes, seconds string) *MyToolActionWidget {
+	hoursLabel := widget.NewLabel(hours)
+	hoursLabel.Importance = widget.HighImportance
 
+	minutesLabel := widget.NewLabel(minutes)
+	minutesLabel.Importance = widget.HighImportance
+
+	secondsLabel := widget.NewLabel(seconds)
+	secondsLabel.Importance = widget.HighImportance
 	item := &MyToolActionWidget{
 		ActionButton: widget.NewButtonWithIcon("", nil, nil),
-		WorkingTime:  canvas.NewText(workingTime, utils.TransformColorFromHex("#800080")),
+		Hours:  hoursLabel,
+		Minutes: minutesLabel,
+		Seconds: secondsLabel,
 	}
 
 	return item
 }
 
 func (item *MyToolActionWidget) CreateRenderer() fyne.WidgetRenderer {
-	c := container.NewHBox(item.ActionButton, item.WorkingTime)
+	divideHour := widget.NewLabel(":")
+	divideMinute := widget.NewLabel(":")
+	divideHour.Importance = widget.HighImportance
+	divideMinute.Importance = widget.HighImportance
+
+	c := container.NewHBox(item.ActionButton, container.NewHBox(item.Hours, divideHour, item.Minutes, divideMinute, item.Seconds))
 	return widget.NewSimpleRenderer(c)
 }
 
@@ -47,6 +64,7 @@ func (item *MyToolActionWidget) SetTask(task *models.Task) {
 	if task.Status == utils.PLAYING {
 		item.ActionButton.SetIcon(pauseIcon)
 	}
+	
 	item.task = task
 
 	item.ActionButton.OnTapped =
@@ -57,6 +75,14 @@ func (item *MyToolActionWidget) SetTask(task *models.Task) {
 				// fmt.Println("PAUSE OK")
 				if app.ActiveTask != nil {
 					if app.ActiveTask.Status == utils.PLAYING {
+						// dialog.NewCustom()
+						popup := dialog.NewCustom("Remind", "Close", container.NewVBox(
+							widget.NewLabel("Only 1 task can run at the same time."),
+							// widget.NewLabel("You can add any content here."),
+						), app.MainWindow)
+				
+						// Show the popup dialog
+						popup.Show()
 						return
 					}
 				}

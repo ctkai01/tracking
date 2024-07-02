@@ -25,12 +25,12 @@ func LoginPage() *fyne.Container {
 	password := widget.NewEntry()
 	password.SetPlaceHolder("Password")
 	password.Password = true
-	urlForgot, _ := url.Parse("https://hustdemt.click")
-	hyperLink := widget.NewHyperlinkWithStyle("Forgot password?", urlForgot, fyne.TextAlignTrailing, fyne.TextStyle{Bold: true})
-	
-	// forgotPasswordText := canvas.NewText("Forgot password?", utils.TransformColorFromHex("#136acb"))
-	// forgotPasswordText.TextStyle.Bold = true
-	// forgotPasswordText.Alignment = fyne.TextAlignTrailing
+
+	urlForgot, _ := url.Parse("https://github.com")
+	hyperLinkForgotPassword := widget.NewHyperlinkWithStyle("Forgot password?", urlForgot, fyne.TextAlignTrailing, fyne.TextStyle{Bold: true})
+
+	urlSignUp, _ := url.Parse("https://google.com")
+	hyperLinkSignUp := widget.NewHyperlinkWithStyle("SignUp", urlSignUp, fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
 
 	loginBtn := widget.NewButton("Login", func() {
 		fmt.Println("basic auth : userName : ", userName.Text, " | password : ", password.Text)
@@ -42,7 +42,7 @@ func LoginPage() *fyne.Container {
 	
 	image := imageContainer()
 
-	centerContainer :=  container.NewVBox(image,container.New(layout.NewPaddingLayout(10, 0, 0, 0), userName), container.New(layout.NewPaddingLayout(10, 10, 0, 0), password) , container.New(layout.NewPaddingLayout(0, 20, 0, 0),hyperLink ), container.NewCenter(fyneLayout.NewSpacer(), loginBtn, fyneLayout.NewSpacer()))
+	centerContainer :=  container.NewVBox(image,container.New(layout.NewPaddingLayout(10, 0, 0, 0), userName), container.New(layout.NewPaddingLayout(10, 10, 0, 0), password) , container.New(layout.NewPaddingLayout(0, 20, 0, 0), container.NewGridWithColumns(2, hyperLinkSignUp, hyperLinkForgotPassword) ), container.NewCenter(fyneLayout.NewSpacer(), loginBtn, fyneLayout.NewSpacer()))
 	// return container.NewCenter(container.New(layout.NewPaddingLayout(0, 0, 100, 100), centerContainer)) 
 	return container.New(layout.NewPaddingLayout(100, 0, 300, 300), centerContainer)
 	// return container.New(layout.NewLoginLayout(fyneLayout.NewSpacer(), content), objs...)
